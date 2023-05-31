@@ -7,7 +7,7 @@ import { MoneyCollectOutlined, DollarCircleOutlined, FundOutlined, ExclamationCi
 
 
 
-// import Loader from './Loader';
+import Loader from './Loader';
 import LineChart from './LineChart';
 import { useGetCryptoDetailsQuery ,useGetCryptoHistoryQuery} from '../services/cryptoApi';
 
@@ -18,11 +18,11 @@ const { Option } = Select;
 const CryptoDetails = () => {
   const { coinId} =useParams();
   const [timePeriod,setTimePeriod] = useState('7d');
-  const { data,isFetching} = useGetCryptoDetailsQuery(coinId);
+  const { data, isFetching} = useGetCryptoDetailsQuery(coinId);
   const { data:coinHistory} = useGetCryptoHistoryQuery({coinId,timePeriod});
   
   const cryptoDetails = data?.data?.coin;
-  if(isFetching) return "Loading...";
+  if (isFetching) return <Loader />;
   const time = ['3h', '24h', '7d', '30d', '1y', '3m', '3y', '5y'];
 
   const stats = [
@@ -42,12 +42,13 @@ const CryptoDetails = () => {
   ];
 
 
+  console.log(cryptoDetails)
   console.log(data)
   return (
     <Col className='coin-detail-container'>
       <Col className='coin-heading-container'>
         <Title level={2} className='coin-name'>
-          {cryptoDetails.name}({cryptoDetails.slug}) Price
+          {data?.data?.coin.name}({data?.data?.coin.symbol}) Price
         </Title>
         <p>
           {cryptoDetails.name} live price in US dollars.
@@ -61,7 +62,7 @@ const CryptoDetails = () => {
         {time.map((date)=><Option key={date}>{date}</Option>)}
 
       </Select>
-      <LineChart coinHistory={coinHistory} currentPrice={millify(cryptoDetails.price)} coinName={cryptoDetails.name}/>
+      <LineChart coinHistory={coinHistory} currentPrice={millify(cryptoDetails?.price)} coinName={cryptoDetails?.name} />
       <Col className='stats-container'>
         <Col className='coin-value-statistics'>
           <Col className='coin-value-statistics-heading'>
